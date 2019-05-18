@@ -48,3 +48,5 @@ dataset and allows a user to input text for classification.
 ## Acknowledgements
 This project was completed in partial fulfillment of the requirements for Udacity's Data Scientist NanoDegree Program. A skeleton of the project was provided by Udacity.
 
+Author: Joshua Tice
+
