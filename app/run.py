@@ -49,6 +49,10 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
+    class_summary = df.loc[:, 'related':'direct_report'].sum().sort_values()
+    class_counts = class_summary.values
+    class_names = class_summary.index
+
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -67,6 +71,24 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=class_names,
+                    y=class_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Classifications',
+                'yaxis': {
+                    'title': 'Count'
+                },
+                'xaxis': {
+                    'title': 'Classification'
                 }
             }
         }
