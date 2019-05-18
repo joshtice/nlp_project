@@ -2,8 +2,14 @@ import json
 import plotly
 import pandas as pd
 
+import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+nltk.download([
+    'averaged_perceptron_tagger',
+    'punkt',
+    'stopwords',
+    'wordnet', ])
 
 from flask import Flask
 from flask import render_template, request, jsonify
