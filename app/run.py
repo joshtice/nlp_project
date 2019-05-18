@@ -1,6 +1,26 @@
+"""
+File:     run.py
+Date:     May 18, 2019
+
+This script runs a simple Flask app that displays information from the
+Disaster Response data set and allows the user to enter arbitrary text
+for classification by a machine learning algorithm trained on the data.
+
+Requirements
+------------
+flask
+nltk
+pandas
+plotly
+sklearn
+sqlalchemy
+
+Acknowledgements
+----------------
+The main() function was provided by Udacity
+"""
+
 import json
-import plotly
-import pandas as pd
 
 import nltk
 from nltk.stem import WordNetLemmatizer
@@ -10,9 +30,10 @@ nltk.download([
     'punkt',
     'stopwords',
     'wordnet', ])
-
 from flask import Flask
 from flask import render_template, request, jsonify
+import pandas as pd
+import plotly
 from plotly.graph_objs import Bar
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
@@ -20,7 +41,22 @@ from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
+
 def tokenize(text):
+    """
+    Tokenize string for machine learning prediction
+
+    Parameters
+    ----------
+    text : str
+        Input text to be tokenized
+
+    Returns
+    -------
+    list
+        Tokens extracted from input text
+    """
+
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -30,6 +66,7 @@ def tokenize(text):
         clean_tokens.append(clean_tok)
 
     return clean_tokens
+
 
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
@@ -49,7 +86,7 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
-    class_summary = df.loc[:, 'related':'direct_report'].sum().sort_values()
+    class_summary = df.loc[:, 'related':'direct_report'].sum().sort_values(ascending=False)
     class_counts = class_summary.values
     class_names = class_summary.index
 
