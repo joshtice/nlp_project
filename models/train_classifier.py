@@ -20,7 +20,7 @@ sqlalchemy
 
 Acknowledgements
 ----------------
-The main() function was provided by Udacity
+The main() function was kindly provided by Udacity
 """
 
 import pickle
@@ -67,8 +67,8 @@ def load_data(database_filepath):
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table(table_name='message_data', con=engine)
     X = df['message'].values
-    Y = df.iloc[:, 1:].values
-    category_names = df.columns[1:]
+    Y = df.iloc[:, 2:].values
+    category_names = df.columns[2:]
 
     return X, Y, category_names
 
@@ -124,9 +124,18 @@ def build_model():
         ('vectorizer', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(
-            LogisticRegression(n_jobs=-1, multi_class='ovr', solver='lbfgs')
+            LogisticRegression(multi_class='ovr', solver='lbfgs')
         )),
     ])
+
+    f10_micro = make_scorer(fbeta_score, beta=10, average='micro')
+
+    params = {
+        'clf__estimator__C': [1.0, 10.0, 100.0],
+    }
+
+    model = GridSearchCV(estimator=pipeline, param_grid=params,
+        scoring=f10_micro, cv=5, n_jobs=-1)
 
     return pipeline
 
