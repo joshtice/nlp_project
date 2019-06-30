@@ -65,10 +65,15 @@ def clean_data(df):
         The cleaned dataframe
     """
 
+    # categories originally exist as a single text field containing the label
+    # and binary value
+
+    # remove labels and make into column names
     categories = df.categories.str.split(";", expand=True)
     col_names = categories.iloc[0].apply(lambda x: x[:-2])
     categories.columns = col_names
 
+    # extract the binary values from the text field
     no_info_cols = []
     for col in categories:
         categories[col] = categories[col].str[-1]
@@ -80,6 +85,7 @@ def clean_data(df):
     if no_info_cols:
         categories = categories.drop(labels=no_info_cols, axis=1)
 
+    # remove the original columns
     df = df.drop(labels=['id', 'original', 'categories'], axis=1)
     df = pd.concat([df, categories], axis=1, sort=False)
     df = df.drop_duplicates()
@@ -100,7 +106,7 @@ def save_data(df, database_filename):
     """
 
     engine = create_engine("sqlite:///{}".format(database_filename))
-    df.to_sql('message_data', engine, index=False)
+    df.to_sql('message_data', engine, index=False, if_exists='replace')
 
 
 def main():

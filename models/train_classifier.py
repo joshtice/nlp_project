@@ -128,6 +128,10 @@ def build_model():
         )),
     ])
 
+    # use F10 score when training the model - more important to grab all the 
+    # emergency messages and occasionally misclassify a non-urgent message
+    # rather than make sure the urgent messages are absolutely correctly
+    # classified
     f10_micro = make_scorer(fbeta_score, beta=10, average='micro')
 
     params = {
@@ -159,6 +163,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
     Y_pred = model.predict(X_test)
     print(classification_report(Y_test.flatten(), Y_pred.flatten()))
 
+    # print classification report for each category
     for i, category in enumerate(category_names):
         print(category.center(52, '-'), '\n')
         print(classification_report(Y_test[:, i], Y_pred[:, i]))
